@@ -80,8 +80,9 @@ module.exports = async function minify_dir(dir, options) {
     return file_paths
   }
 
-  function normalize_path(f) {
-    f = f.replace(basePath, '')
+  function normalize_path(f, cwd) {
+    cwd ||= basePath
+    f = f.replace(cwd, '')
     if (f.startsWith('/')) { f = f.substring(1) }
     return f
   }
@@ -93,9 +94,16 @@ module.exports = async function minify_dir(dir, options) {
     const str = await remove_code(f, removeCode)
     const { code } = f.endsWith('.js') ? perform_minify(str) : { code: str }
     const dst_file = path.join(dest, normalize_path(f))
-    const dst_dir = path.dirname(path.join(dest, normalize_path(f)))
-    console.log(`Minified: ${normalize_path(f)} -> ${dst_file}`)
+    const dst_dir = path.dirname(path.join(dest, normalize_path(f))) 
+
     await fs.promises.mkdir(dst_dir, {recursive: true})
     await fs.promises.writeFile(dst_file, code)
+
+    try {
+      console.log(`Minified: ${normalize_path(f)} -> ${path.join(normalize_path(dest, process.cwd()), normalize_path(dst_file, dest))}`)
+    } catch(e) {
+      console.log(`Minified: ${normalize_path(f)}`)
+    }
+
   }))
 }
