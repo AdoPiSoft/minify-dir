@@ -1,14 +1,15 @@
 {
   "name": "minify-dir",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Minimize javascript source codes in directory with options to remove debug codes.",
-  "main": "index.mjs",
+  "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "test": "node test.mjs"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AdoPiSoft/minimize-dir.git"
+    "url": "git+https://github.com/AdoPiSoft/minify-dir.git"
   },
   "keywords": [
     "minimize",
@@ -17,11 +18,11 @@
   "author": "AdoPiSoft <support@adopisoft.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AdoPiSoft/minimize-dir/issues"
+    "url": "https://github.com/AdoPiSoft/minify-dir/issues"
   },
-  "homepage": "https://github.com/AdoPiSoft/minimize-dir#readme",
+  "homepage": "https://github.com/AdoPiSoft/minify-dir#readme",
   "dependencies": {
     "babel-minify": "^0.5.2",
-    "escape-string-regexp": "^5.0.0"
+    "escape-string-regexp": "4.0.0"
   }
 }

@@ -1,6 +1,6 @@
-import escapeStringRegexp from 'escape-string-regexp'
-import { extname } from 'path'
-import fs from 'fs'
+const escapeStringRegexp = require('escape-string-regexp')
+const { extname } = require('path')
+const fs = require('fs')
 
 const regexCache = new Map()
 const extensions = new Map([
@@ -86,7 +86,7 @@ function prepareOptions (file_path, options) {
   return options
 }
 
-const remove_debug = async function (file, options) {
+module.exports = async function (file, options) {
   options = Object.assign({}, options)
   options.conditions = []
 
@@ -102,5 +102,3 @@ const remove_debug = async function (file, options) {
 
   return result
 }
-
-export default remove_debug

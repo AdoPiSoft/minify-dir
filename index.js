@@ -1,7 +1,7 @@
-import fs from 'fs'
-import path from 'path'
-import remove_code from './remove_debug.mjs'
-import minify from 'babel-minify'
+const fs = require('fs')
+const path = require('path')
+const remove_code = require('./remove_debug.js')
+const minify = require('babel-minify')
 
 const default_opts = {
   dest: process.cwd(),
@@ -49,7 +49,7 @@ function perform_minify(code) {
   }
 }
 
-export default async function minify_dir(dir, options) {
+module.exports = async function minify_dir(dir, options) {
   options = normalize_options(options) 
   const { basePath, dest, removeCode, excludeDirs } = options
 

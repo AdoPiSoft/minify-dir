@@ -1,5 +1,5 @@
-import path from 'path'
-import minify_src from './index.mjs'
+const path = require('path')
+const minify_dir = require('./index.js')
 
 const basePath = 'tests'
 const dest = path.join(process.cwd(), 'release/@adopisoft')
@@ -9,4 +9,4 @@ const removeCode = {
 }
 
 
-minify_src('src', { basePath, dest, excludeDirs, removeCode })
+minify_dir('src', { basePath, dest, excludeDirs, removeCode })
