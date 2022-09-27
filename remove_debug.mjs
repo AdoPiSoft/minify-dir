@@ -1,8 +1,6 @@
-'use strict'
-
-const escapeStringRegexp = require('escape-string-regexp')
-const { extname } = require('path')
-const fs = require('fs').promises
+import escapeStringRegexp from 'escape-string-regexp'
+import { extname } from 'path'
+import fs from 'fs'
 
 const regexCache = new Map()
 const extensions = new Map([
@@ -88,7 +86,7 @@ function prepareOptions (file_path, options) {
   return options
 }
 
-module.exports = async function (file, options) {
+const remove_debug = async function (file, options) {
   options = Object.assign({}, options)
   options.conditions = []
 
@@ -99,8 +97,10 @@ module.exports = async function (file, options) {
   }
 
   options = prepareOptions(file, options)
-  const contents = await fs.readFile(file, 'utf8')
+  const contents = await fs.promises.readFile(file, 'utf8')
   const result = removeCode(contents, options)
 
   return result
 }
+
+export default remove_debug

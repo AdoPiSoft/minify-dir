@@ -4,7 +4,7 @@
   "description": "Minimize javascript source codes in directory with options to remove debug codes.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.mjs"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/AdoPiSoft/minimize-dir#readme",
   "dependencies": {
-    "@adopisoft/build-params": "AdoPiSoft/build-params#v1.0.0"
+    "babel-minify": "^0.5.2",
+    "escape-string-regexp": "^5.0.0"
   }
 }
