@@ -1,9 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 const remove_code = require('./remove_debug.js')
-const minify = require('babel-minify')
+const babelMinify = require('babel-minify')
 
 const default_opts = {
+  minify: true,
   dest: process.cwd(),
   basePath: process.cwd(),
   excludeDirs: [],
@@ -13,7 +14,7 @@ const default_opts = {
 function normalize_options(options) {
   options ||= {}
   options = Object.assign(default_opts, options)
-  let { basePath, dest, excludeDirs, removeCode } = options
+  let { minify, basePath, dest, excludeDirs, removeCode } = options
 
   if (typeof excludeDirs == 'string') {
     excludeDirs = [excludeDirs]
@@ -36,12 +37,12 @@ function normalize_options(options) {
     return ed
   })
 
-  return { basePath, dest, excludeDirs, removeCode }
+  return { minify, basePath, dest, excludeDirs, removeCode }
 }
 
 function perform_minify(code) {
   try {
-    return minify(code)
+    return babelMinify(code)
   } catch (e) {
     // return original code
     console.log(e)
@@ -51,7 +52,7 @@ function perform_minify(code) {
 
 module.exports = async function minify_dir(dir, options) {
   options = normalize_options(options) 
-  const { basePath, dest, removeCode, excludeDirs } = options
+  const { minify, basePath, dest, removeCode, excludeDirs } = options
 
   async function readdir (dir_path) {
     const files = await fs.promises.readdir(dir_path).then(files => {
@@ -92,7 +93,7 @@ module.exports = async function minify_dir(dir, options) {
 
   await Promise.all(files.map(async f => {
     const str = await remove_code(f, removeCode)
-    const { code } = f.endsWith('.js') ? perform_minify(str) : { code: str }
+    const { code } = f.endsWith('.js') && minify ? perform_minify(str) : { code: str }
     const dst_file = path.join(dest, normalize_path(f))
     const dst_dir = path.dirname(path.join(dest, normalize_path(f))) 
 
