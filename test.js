@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const minify_dir = require('./index.js')
 
-const minify = true
+const minify = false
 const basePath = 'tests'
 const dest = path.join(process.cwd(), 'release/@adopisoft')
 const excludeDirs = ['tests/exclude']

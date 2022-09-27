@@ -1,6 +1,6 @@
 {
   "name": "minify-dir",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Minimize javascript source codes in directory with options to remove debug codes.",
   "main": "index.js",
   "type": "commonjs",
