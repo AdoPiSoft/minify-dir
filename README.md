@@ -45,7 +45,7 @@ minifyDir(src, options)
 
 - The first param is the directory to be minified. All contents of the `src` directory in this example are going to be processed and the output will be saved in `release` directory. So if you have a file `src/dir1/file.js`, it will be saved in `release/dir1/file.js`.
 
-- The second param is the [**Options**](##Options) object.
+- The second param is the [**Options**](#Options) object.
 
 ## Options
 
