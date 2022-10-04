@@ -106,3 +106,5 @@ release/
 *.swp
 tags
 tags.*
+
+.git
