@@ -51,7 +51,7 @@ minifyDir(src, options)
 
 **minify** - If object is passed, the object will be passed on to [babel-minify](https://babeljs.io/docs/en/babel-minify). If value is `false`, the output js files are not minified. Default is `true`.
 
-**basePath** - The path where to start looking for the `src` and where to store the `release` directory. Default is `process.cwd()`.
+**basePath** - The path where to start looking for the `options.src` and where to store the `options.release` directory. Default is `process.cwd()`.
 
 
 **dest** - The output folder. Default is `process.cwd() + 'release'`.
