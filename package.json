@@ -1,6 +1,6 @@
 {
   "name": "minify-dir",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "Minimize javascript source codes in directory with options to remove debug codes.",
   "main": "index.js",
   "type": "commonjs",
@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/AdoPiSoft/minify-dir#readme",
   "dependencies": {
-    "babel-minify": "^0.5.2",
-    "escape-string-regexp": "4.0.0"
+    "escape-string-regexp": "4.0.0",
+    "uglify-js": "^3.17.3"
   },
   "devDependencies": {
     "eslint": "^8.0.1",

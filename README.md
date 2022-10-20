@@ -50,7 +50,7 @@ minifyDir(src, options)
 
 ## Options
 
-**minify** - If object is passed, the object will be passed on to [babel-minify](https://babeljs.io/docs/en/babel-minify). If value is `false`, the output js files are not minified. Default is `true`.
+**minify** - If object is passed, the object will be passed on to [uglify-js](https://www.npmjs.com/package/uglify-js). If value is `false`, the output js files are not minified. Default is `true`.
 
 **copy** - Copy none-js files from `src` to `options.dest`. Default `true`
 

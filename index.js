@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const removeDebug = require('./remove_debug.js')
-const babelMinify = require('babel-minify')
+const removeDebug = require('./remove_code')
+const Uglify = require('uglify-js')
 
 const dirsCache = []
 
@@ -26,6 +26,10 @@ function normalizeOptions(options) {
   options = Object.assign(defaultOpts, options)
   let { minify, copy, basePath, dest, excludeDirs, removeCode } = options
 
+  if (typeof copy !== 'boolean') {
+    copy = defaultOpts.copy
+  }
+
   if (typeof excludeDirs === 'string') {
     excludeDirs = [excludeDirs]
   }
@@ -43,8 +47,9 @@ function normalizeOptions(options) {
   excludeDirs = excludeDirs.map(ed => {
     if (!ed.startsWith('/')) {
       return path.join(basePath, ed)
+    } else {
+      return ed
     }
-    return ed
   })
 
   return { minify, copy, basePath, dest, excludeDirs, removeCode }
@@ -57,9 +62,6 @@ module.exports = async function minifyDir(dir, options) {
   async function readdir(dirPath) {
     const files = await fs.promises.readdir(dirPath).then(files => {
       return files.map(f => path.join(dirPath, f))
-        .filter(f => {
-          return !excludeDirs.filter(d => f.startsWith(d)).length
-        })
     })
     return files
   }
@@ -89,14 +91,9 @@ module.exports = async function minifyDir(dir, options) {
   }
 
   function performMinify(code) {
-    try {
-      const minifyOpts = typeof minify === 'object' ? minify : {}
-      return babelMinify(code, minifyOpts)
-    } catch (e) {
-      // return original code
-      console.error(e)
-      return code
-    }
+    const minifyOpts = typeof minify === 'object' ? minify : {}
+    const result = Uglify.minify(code, minifyOpts)
+    return result.code
   }
 
   const dirPath = path.join(basePath, dir)
@@ -105,24 +102,31 @@ module.exports = async function minifyDir(dir, options) {
   await Promise.all(files.map(async f => {
     const dstFile = path.join(dest, normalizePath(f))
     const dstDir = path.dirname(path.join(dest, normalizePath(f)))
+    const excluded = excludeDirs.filter(ed => {
+      return f.startsWith(ed)
+    }).length
 
-    if (f.endsWith('.js')) {
-      const str = await removeDebug(f, removeCode)
-      const { code } = minify ? performMinify(str) : { code: str }
+    if (!excluded) {
+      if (f.endsWith('.js')) {
+        const str = await removeDebug(f, removeCode)
+        const code = minify ? performMinify(str) : str
 
-      await createDir(dstDir)
-      await fs.promises.writeFile(dstFile, code)
-      if (minify) {
-        console.log(`Minified: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
+        await createDir(dstDir)
+        await fs.promises.writeFile(dstFile, code)
+        if (minify) {
+          console.log(`Minified: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
+        } else {
+          console.log(`Removed debug codes: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
+        }
+      } else if (copy) {
+        await createDir(dstDir)
+        await fs.promises.cp(f, dstFile)
+        console.log(`Copied: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
       } else {
-        console.log(`Removed debug codes: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
+        console.log(`Skipping: ${normalizePath(f)}`)
       }
-    } else if (copy) {
-      await createDir(dstDir)
-      await fs.promises.cp(f, dstFile)
-      console.log(`Copied: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
     } else {
-      console.log(`Skipping: ${normalizePath(f)}`)
+      console.log(`Excluded: ${normalizePath(f)}`)
     }
   }))
 }
