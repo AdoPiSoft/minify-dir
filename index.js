@@ -1,22 +1,32 @@
 const fs = require('fs')
 const path = require('path')
-const remove_code = require('./remove_debug.js')
+const removeDebug = require('./remove_debug.js')
 const babelMinify = require('babel-minify')
 
-const default_opts = {
+const dirsCache = []
+
+const defaultOpts = {
   minify: true,
+  copy: true,
   dest: process.cwd(),
   basePath: process.cwd(),
   excludeDirs: [],
   removeCode: {}
 }
 
-function normalize_options(options) {
-  options ||= {}
-  options = Object.assign(default_opts, options)
-  let { minify, basePath, dest, excludeDirs, removeCode } = options
+async function createDir(dir) {
+  if (dirsCache.indexOf(dir) < 0) {
+    await fs.promises.mkdir(dir, { recursive: true })
+    dirsCache.push(dir)
+  }
+}
 
-  if (typeof excludeDirs == 'string') {
+function normalizeOptions(options) {
+  options ||= {}
+  options = Object.assign(defaultOpts, options)
+  let { minify, copy, basePath, dest, excludeDirs, removeCode } = options
+
+  if (typeof excludeDirs === 'string') {
     excludeDirs = [excludeDirs]
   }
   if (!basePath.startsWith('/')) {
@@ -37,16 +47,16 @@ function normalize_options(options) {
     return ed
   })
 
-  return { minify, basePath, dest, excludeDirs, removeCode }
+  return { minify, copy, basePath, dest, excludeDirs, removeCode }
 }
 
-module.exports = async function minify_dir(dir, options) {
-  options = normalize_options(options)
-  const { minify, basePath, dest, removeCode, excludeDirs } = options
+module.exports = async function minifyDir(dir, options) {
+  options = normalizeOptions(options)
+  const { minify, basePath, dest, removeCode, excludeDirs, copy } = options
 
-  async function readdir(dir_path) {
-    const files = await fs.promises.readdir(dir_path).then(files => {
-      return files.map(f => path.join(dir_path, f))
+  async function readdir(dirPath) {
+    const files = await fs.promises.readdir(dirPath).then(files => {
+      return files.map(f => path.join(dirPath, f))
         .filter(f => {
           return !excludeDirs.filter(d => f.startsWith(d)).length
         })
@@ -54,65 +64,66 @@ module.exports = async function minify_dir(dir, options) {
     return files
   }
 
-  async function readdir_recursive(dir_path, file_paths) {
-    file_paths ||= []
-    const files = await readdir(dir_path)
+  async function readdirRecursive(dirPath, filePaths) {
+    filePaths ||= []
+    const files = await readdir(dirPath)
 
     await Promise.all(files.map(async f => {
       const stat = await fs.promises.lstat(f)
-      if (stat.isFile() && /\.(js|json)$/.test(f)) {
-        file_paths.push(f)
+      if (stat.isFile()) {
+        filePaths.push(f)
       }
       if (stat.isDirectory()) {
-        await readdir_recursive(f, file_paths)
+        await readdirRecursive(f, filePaths)
       }
     }))
 
-    return file_paths
+    return filePaths
   }
 
-  function normalize_path(f, cwd) {
+  function normalizePath(f, cwd) {
     cwd ||= basePath
     f = f.replace(cwd, '')
     if (f.startsWith('/')) { f = f.substring(1) }
     return f
   }
 
-
-  function perform_minify(code) {
+  function performMinify(code) {
     try {
-      const minifyOpts = typeof minify == 'object' ? minify : {}
+      const minifyOpts = typeof minify === 'object' ? minify : {}
       return babelMinify(code, minifyOpts)
     } catch (e) {
       // return original code
-      console.log(e)
+      console.error(e)
       return code
     }
   }
 
-
-  const dir_path = path.join(basePath, dir)
-  const files = await readdir_recursive(dir_path)
+  const dirPath = path.join(basePath, dir)
+  const files = await readdirRecursive(dirPath)
 
   await Promise.all(files.map(async f => {
-    const should_minify = f.endsWith('.js') && minify
-    const str = await remove_code(f, removeCode)
-    const { code } = should_minify ? perform_minify(str) : { code: str }
-    const dst_file = path.join(dest, normalize_path(f))
-    const dst_dir = path.dirname(path.join(dest, normalize_path(f)))
+    const shouldMinify = f.endsWith('.js') && minify
+    const dstFile = path.join(dest, normalizePath(f))
+    const dstDir = path.dirname(path.join(dest, normalizePath(f)))
 
-    await fs.promises.mkdir(dst_dir, { recursive: true })
-    await fs.promises.writeFile(dst_file, code)
+    if (shouldMinify) {
+      const str = await removeDebug(f, removeCode)
+      const { code } = shouldMinify ? performMinify(str) : { code: str }
 
-    if (should_minify) {
+      await createDir(dstDir)
+      await fs.promises.writeFile(dstFile, code)
       try {
-        console.log(`Minified: ${normalize_path(f)} -> ${path.join(normalize_path(dest, process.cwd()), normalize_path(dst_file, dest))}`)
+        console.log(`Minified: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
       } catch (e) {
-        console.log(`Removed codes: ${normalize_path(f)}`)
+        console.log(`Removed codes: ${normalizePath(f)}`)
       }
+    } else if (copy) {
+      await createDir(dstDir)
+      await fs.promises.cp(f, dstFile)
+      console.log(`Copied: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
     } else {
-      process.stdout.write('.')
+      console.log(`Skipping: ${normalizePath(f)}`)
     }
-
   }))
 }

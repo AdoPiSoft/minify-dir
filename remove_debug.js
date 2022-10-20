@@ -15,7 +15,7 @@ const extensions = new Map([
   ['.tsx', [['//', ''], ['/*', '*/']]]
 ])
 
-function applyReplacements (contents, {commentTypes, conditions}) {
+function applyReplacements (contents, { commentTypes, conditions }) {
   if (contents.length > 0) {
     for (const [key, value] of conditions) {
       for (const [commentStart, commentEnd] of commentTypes) {
@@ -72,11 +72,11 @@ function removeCode (contents, options) {
   }
 }
 
-function prepareOptions (file_path, options) {
-  if (file_path) {
+function prepareOptions (filePath, options) {
+  if (filePath) {
     if (!options.commentStart) {
       // Detect comment tokens
-      const fileExt = extname(file_path)
+      const fileExt = extname(filePath)
       options.commentTypes = extensions.has(fileExt) ? extensions.get(fileExt) : [['//', '']]
     } else {
       options.commentTypes = [[options.commentStart, options.commentEnd || '']]

@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-const minify_dir = require('./index.js')
+const minifyDir = require('./index.js')
 
 const minify = {}
 const basePath = 'tests'
@@ -10,10 +10,10 @@ const removeCode = {
   debug: false,
   prod: true
 }
-
+const copy = false
 
 async function test() {
-  await minify_dir('src', { minify, basePath, dest, excludeDirs, removeCode })
+  await minifyDir('src', { minify, copy, basePath, dest, excludeDirs, removeCode })
   const result = await fs.promises.readFile('release/@adopisoft/src/remove_if_test.js', 'utf8')
   console.log('RESULT:\n\n\n', result)
 }
