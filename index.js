@@ -93,6 +93,7 @@ module.exports = async function minifyDir(dir, options) {
   function performMinify(code) {
     const minifyOpts = typeof minify === 'object' ? minify : {}
     const result = Uglify.minify(code, minifyOpts)
+    if (result.error) throw new Error(result.error)
     return result.code
   }
 
@@ -109,10 +110,10 @@ module.exports = async function minifyDir(dir, options) {
     if (!excluded) {
       if (f.endsWith('.js')) {
         const str = await removeDebug(f, removeCode)
-        const code = minify ? performMinify(str) : str
+        const result = minify ? performMinify(str) : str
 
         await createDir(dstDir)
-        await fs.promises.writeFile(dstFile, code)
+        await fs.promises.writeFile(dstFile, result)
         if (minify) {
           console.log(`Minified: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
         } else {
