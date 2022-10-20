@@ -103,20 +103,19 @@ module.exports = async function minifyDir(dir, options) {
   const files = await readdirRecursive(dirPath)
 
   await Promise.all(files.map(async f => {
-    const shouldMinify = f.endsWith('.js') && minify
     const dstFile = path.join(dest, normalizePath(f))
     const dstDir = path.dirname(path.join(dest, normalizePath(f)))
 
-    if (shouldMinify) {
+    if (f.endsWith('.js')) {
       const str = await removeDebug(f, removeCode)
-      const { code } = shouldMinify ? performMinify(str) : { code: str }
+      const { code } = minify ? performMinify(str) : { code: str }
 
       await createDir(dstDir)
       await fs.promises.writeFile(dstFile, code)
-      try {
+      if (minify) {
         console.log(`Minified: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
-      } catch (e) {
-        console.log(`Removed codes: ${normalizePath(f)}`)
+      } else {
+        console.log(`Removed debug codes: ${normalizePath(f)} -> ${path.join(normalizePath(dest, process.cwd()), normalizePath(dstFile, dest))}`)
       }
     } else if (copy) {
       await createDir(dstDir)

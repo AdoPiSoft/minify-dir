@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const minifyDir = require('./index.js')
 
-const minify = {}
+const minify = true
 const basePath = 'tests'
 const dest = path.join(process.cwd(), 'release/@adopisoft')
 const excludeDirs = ['tests/exclude']
@@ -10,7 +10,7 @@ const removeCode = {
   debug: false,
   prod: true
 }
-const copy = false
+const copy = true
 
 async function test() {
   await minifyDir('src', { minify, copy, basePath, dest, excludeDirs, removeCode })
