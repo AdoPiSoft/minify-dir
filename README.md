@@ -61,6 +61,6 @@ minifyDir(src, options)
 
 **dest** - The output folder. Default is `process.cwd() + 'release'`.
 
-**removeCode** - The values passed to remove code conditions. Default is `{}`.
+**removeCode** - The values passed to [remove code](https://github.com/crissdev/gulp-remove-code) conditions. Default is `{}`.
 
 **excludePatterns** - RegExp patterns used to match when excluding files. Excluded files will not be copied nor minified. Default is `[/\.git/]`.
