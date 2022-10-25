@@ -1,11 +1,11 @@
 {
   "name": "minify-dir",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Minimize javascript/typescript source codes in directory with options to remove debug codes.",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc -p ./tsconfig.build.json",
-    "prepare": "npm run build",
+    "postinstall": "npm run build",
     "test": "npm run build && rm -rf ./release && ts-mocha -p ./tsconfig.json test/**/*.spec.ts"
   },
   "repository": {
