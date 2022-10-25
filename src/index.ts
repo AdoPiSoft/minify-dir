@@ -8,7 +8,7 @@ import Uglify = require('uglify-js')
 interface Options {
   minify: boolean | Uglify.MinifyOptions
   copy: boolean
-  tsc: ts.BuildOptions
+  tsc: ts.CompilerOptions
   dest: string
   basePath: string
   excludePatterns: RegExp[]
@@ -18,7 +18,7 @@ interface Options {
 interface OptionalOpts {
   minify?: boolean | Uglify.MinifyOptions
   copy?: boolean
-  tsc?: ts.BuildOptions
+  tsc?: ts.CompilerOptions
   dest?: string
   basePath?: string
   excludePatterns?: RegExp[]
@@ -30,10 +30,8 @@ const dirsCache: string[] = []
 const defaultOpts: Options = {
   minify: true,
   copy: true,
-  tsc: {
-    module: 'commonjs'
-  },
-  dest: process.cwd(),
+  tsc: {},
+  dest: `${process.cwd()}/release`,
   basePath: process.cwd(),
   excludePatterns: [/\.git/],
   removeCode: {}

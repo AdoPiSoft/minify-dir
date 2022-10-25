@@ -2,6 +2,7 @@ import path = require('node:path')
 import chai = require('chai')
 import assert = require('assert/strict')
 import pq = require('proxyquire')
+import ts = require('typescript')
 import isOneLine = require('./helpers/is-one-line')
 import constants = require('./helpers/constants')
 import minifyDir = require('../')
@@ -11,6 +12,7 @@ const { expect } = chai
 const { BASE_DIR, RELEASE_DIR } = constants
 const basePath = BASE_DIR
 const dest = RELEASE_DIR
+const tsc = { module: ts.ModuleKind.CommonJS }
 
 const sampleJsPath = path.join(dest, 'src/js-sample.js')
 const sampleTsPath = path.join(dest, 'src/ts-sample.js')
@@ -21,6 +23,7 @@ describe('Testing minify option', () => {
       const options = {
         basePath,
         minify: true,
+        tsc,
         dest,
         removeCode: {
           debug: false,
@@ -40,6 +43,7 @@ describe('Testing minify option', () => {
         const options = {
           basePath,
           minify: true,
+          tsc,
           dest,
           removeCode: {
             debug: true,
@@ -62,6 +66,7 @@ describe('Testing minify option', () => {
       const options = {
         basePath,
         minify: false,
+        tsc,
         dest,
         removeCode: {
           debug: true,
@@ -82,6 +87,7 @@ describe('Testing minify option', () => {
         const options = {
           basePath,
           minify: false,
+          tsc,
           dest,
           removeCode: {
             debug: false,
