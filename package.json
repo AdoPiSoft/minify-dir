@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc -p ./tsconfig.build.json",
-    "test": "npm run build && rm -rf ./release && ts-mocha -p ./tsconfig.json test/**/*.spec.ts",
-    "postinstall": "npm run build"
+    "prepare": "npm run build",
+    "test": "npm run build && rm -rf ./release && ts-mocha -p ./tsconfig.json test/**/*.spec.ts"
   },
   "repository": {
     "type": "git",
@@ -24,14 +24,14 @@
   },
   "homepage": "https://github.com/AdoPiSoft/minify-dir#readme",
   "dependencies": {
-    "@types/node": "^18.11.5",
-    "@types/semver": "^7.3.12",
-    "@types/uglify-js": "^3.17.1",
     "escape-string-regexp": "4.0.0",
     "typescript": "^4.8.4",
     "uglify-js": "^3.17.3"
   },
   "devDependencies": {
+    "@types/node": "^18.11.5",
+    "@types/semver": "^7.3.12",
+    "@types/uglify-js": "^3.17.1",
     "@types/chai": "^4.3.3",
     "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.0",
