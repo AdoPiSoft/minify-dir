@@ -1,5 +1,5 @@
 # minify-dir
-Minify javascript source codes in specified directory with options to remove debug codes.
+Minify typescript/javascript source codes in specified directory with options to remove debug codes.
 
 ---
 
@@ -26,9 +26,10 @@ import minifyDir from 'minify-dir'
 const options = {
   minify: true,
   copy: true,
+  tsc: {},
   basePath: '.'
-  dest: 'release',
-  excludeDirs: [],
+  dest: `${process.cwd()}/release`,
+  excludePatterns: [/\.git/],
   removeCode: {
       prod: true,
       debug: false
@@ -54,12 +55,12 @@ minifyDir(src, options)
 
 **copy** - Copy none-js files from `src` to `options.dest`. Default `true`
 
-**basePath** - The path where to start looking for the `options.src` and where to store the `options.dest` directory. Default is `process.cwd()`.
+**tsc** - A typescript [compilerOptions](https://www.typescriptlang.org/tsconfig#compilerOptions) object used in transpiling typescript source. Default is `{}`.
 
+**basePath** - The path where to start looking for the `options.src` and where to store the `options.dest` directory. Default is `process.cwd()`.
 
 **dest** - The output folder. Default is `process.cwd() + 'release'`.
 
 **removeCode** - The values passed to remove code conditions. Default is `{}`.
 
-**excludeDirs** - Directories to exclude from processing. Default is `[]`.
-
+**excludePatterns** - RegExp patterns used to match when excluding files. Excluded files will not be copied nor minified. Default is `[/\.git/]`.

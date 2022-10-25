@@ -1,7 +1,22 @@
-const escapeStringRegexp = require('escape-string-regexp')
-const { extname } = require('path')
-const fs = require('fs')
+import escapeStringRegexp = require('escape-string-regexp')
+import path = require('path')
+import fs = require('fs')
 
+interface Options {
+  commentStart: string
+  commentEnd: string
+  commentTypes: string[]
+  conditions: any
+}
+
+interface OptionalOpts {
+  commentStart?: string
+  commentEnd?: string
+  commentTypes?: string[]
+  conditions?: any
+}
+
+const { extname } = path
 const regexCache = new Map()
 const extensions = new Map([
   ['.coffee', [['#', ''], ['###', '###']]],
@@ -15,15 +30,16 @@ const extensions = new Map([
   ['.tsx', [['//', ''], ['/*', '*/']]]
 ])
 
-function applyReplacements (contents, { commentTypes, conditions }) {
+function applyReplacements (contents: any, { commentTypes, conditions }: Options): any {
   if (contents.length > 0) {
     for (const [key, value] of conditions) {
       for (const [commentStart, commentEnd] of commentTypes) {
         const regex = getRemovalTagsRegExp(commentStart, commentEnd, key)
 
         contents = contents.replace(regex, function (ignore, original, capture) {
-          const not = (capture === '!')
-          return (value ^ not) ? '' : original
+          const not = (capture === '!') ? 1 : 0
+          const valXorNot = value ^ not
+          return (valXorNot) === 1 ? '' : original
         })
       }
     }
@@ -31,7 +47,7 @@ function applyReplacements (contents, { commentTypes, conditions }) {
   return contents
 }
 
-function getRemovalTagsRegExp (commentStart, commentEnd, key) {
+function getRemovalTagsRegExp (commentStart: string, commentEnd: string, key: string): RegExp {
   const cacheKey = `${commentStart}${commentEnd}${key}`
 
   if (regexCache.has(cacheKey)) {
@@ -57,6 +73,7 @@ function getRemovalTagsRegExp (commentStart, commentEnd, key) {
     escapedCommentEnd,
     ')'
   ].join('')
+
   const re = new RegExp(pattern, 'gi')
 
   regexCache.set(cacheKey, re)
@@ -64,21 +81,18 @@ function getRemovalTagsRegExp (commentStart, commentEnd, key) {
   return re
 }
 
-function removeCode (contents, options) {
-  try {
-    return applyReplacements(contents, options)
-  } catch (error) {
-    console.log(error)
-  }
+function removeCode (contents, options: Options): string {
+  return applyReplacements(contents, options)
 }
 
-function prepareOptions (filePath, options) {
-  if (filePath) {
-    if (!options.commentStart) {
+function prepareOptions (filePath: string, options: any): Options {
+  if (filePath !== '') {
+    if (options.commentStart !== '') {
       // Detect comment tokens
       const fileExt = extname(filePath)
       options.commentTypes = extensions.has(fileExt) ? extensions.get(fileExt) : [['//', '']]
     } else {
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       options.commentTypes = [[options.commentStart, options.commentEnd || '']]
     }
   }
@@ -86,7 +100,7 @@ function prepareOptions (filePath, options) {
   return options
 }
 
-module.exports = async function (file, options) {
+export = async function (file: string, options: OptionalOpts): Promise<string> {
   options = Object.assign({}, options)
   options.conditions = []
 
@@ -96,9 +110,9 @@ module.exports = async function (file, options) {
     }
   }
 
-  options = prepareOptions(file, options)
+  const opts = prepareOptions(file, options)
   const contents = await fs.promises.readFile(file, 'utf8')
-  const result = removeCode(contents, options)
+  const result = removeCode(contents, opts)
 
   return result
 }

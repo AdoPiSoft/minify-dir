@@ -1,0 +1,30 @@
+{
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "release",
+    "lib"
+  ],
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "commonjs",
+    "lib": [
+      "es2021"
+    ],
+    "moduleResolution": "node",
+    "allowJs": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "lib",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "resolveJsonModule": true
+  }
+}
