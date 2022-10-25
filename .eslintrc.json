@@ -1,17 +1,19 @@
 {
+  "root": true,
   "env": {
-    "browser": true,
+    "browser": false,
     "node": true,
-    "commonjs": true,
     "es2021": true
   },
-  "extends": "standard",
+  "plugins": ["promise"],
+  "extends": "standard-with-typescript",
   "overrides": [],
   "parserOptions": {
-    "ecmaVersion": "latest"
+    "project": "./tsconfig.json",
+    "ecmaVersion": "latest",
+    "sourceType": "module"
   },
   "rules": {
-    "camelcase": [2, {"properties": "always"}],
-    "space-before-function-paren": "off"
+    "@typescript-eslint/no-var-requires": "off"
   }
 }
