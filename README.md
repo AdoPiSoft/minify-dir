@@ -10,12 +10,12 @@ This module was inspired by: https://github.com/crissdev/gulp-remove-code
 Given a sample JS file `src/dir1/file.js`:
 ```js
 //removeIf(prod)
-console.log('This will be removed since options.removeCode.prod is true')
+console.log('This will be removed if options.removeCode.prod is true')
 //endRemoveIf(prod)
 
 
 //removeIf(debug)
-console.log('This will not be removed since options.removeCode.debug is false')
+console.log('This will not be removed if options.removeCode.debug is false')
 //endRemoveIf(debug)
 ```
 
