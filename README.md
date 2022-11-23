@@ -19,6 +19,8 @@ console.log('This will not be removed since options.removeCode.debug is false')
 //endRemoveIf(debug)
 ```
 
+`your-minify-script.js`
+
 ```js
 import minifyDir from 'minify-dir'
 // or const minifyDir = require('minify-dir')
