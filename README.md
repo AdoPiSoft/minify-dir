@@ -47,7 +47,7 @@ minifyDir(src, options)
 
 ## Params
 
-- The first param is the directory to be minified. All contents of the `src` directory in this example are going to be processed and the output will be saved in `release` directory. So if you have a file `src/dir1/file.js`, it will be saved in `release/dir1/file.js`.
+- The first param is the directory to be minified. All contents of the `src` directory in this example are going to be processed and the output will be saved in `release` directory. So if you have a file `src/dir1/file.js`, it will be saved in `release/dir1/file.js`. `src` can also be an absolute path in which case it ignores the `options.basePath`.
 
 - The second param is the [**Options**](#Options) object.
 
@@ -55,13 +55,13 @@ minifyDir(src, options)
 
 **minify** - If object is passed, the object will be passed on to [uglify-js](https://www.npmjs.com/package/uglify-js). If value is `false`, the output js files are not minified. Default is `true`, calls `uglify-js` without options.
 
-**copy** - Copy none-js files from `options.src` to `options.dest`. Default `true`
+**copy** - Copy none-js files from `src` to `options.dest`. Default `true`
 
 **tsc** - A typescript [compilerOptions](https://www.typescriptlang.org/tsconfig#compilerOptions) object used in transpiling typescript source. Default is `{}`.
 
 **basePath** - The path where to start looking for the `options.src` and where to store the `options.dest` directory. Default is `process.cwd()`.
 
-**dest** - The output folder. Default is `process.cwd() + 'release'`.
+**dest** - The output folder. Default is `process.cwd() + 'release'`. Can also be an absolute path in which case it ignores the `options.basePath`.
 
 **removeCode** - The values passed to [remove code](https://github.com/crissdev/gulp-remove-code) conditions. Default is `{}`.
 
