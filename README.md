@@ -53,9 +53,9 @@ minifyDir(src, options)
 
 ## Options
 
-**minify** - If object is passed, the object will be passed on to [uglify-js](https://www.npmjs.com/package/uglify-js). If value is `false`, the output js files are not minified. Default is `true`.
+**minify** - If object is passed, the object will be passed on to [uglify-js](https://www.npmjs.com/package/uglify-js). If value is `false`, the output js files are not minified. Default is `true`, calls `uglify-js` without options.
 
-**copy** - Copy none-js files from `src` to `options.dest`. Default `true`
+**copy** - Copy none-js files from `options.src` to `options.dest`. Default `true`
 
 **tsc** - A typescript [compilerOptions](https://www.typescriptlang.org/tsconfig#compilerOptions) object used in transpiling typescript source. Default is `{}`.
 
